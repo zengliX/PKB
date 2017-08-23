@@ -11,11 +11,51 @@ The program is written in **Python3**. Please install the following Python packa
 - multiprocessing
 - yaml
 - matplotlib
+- pickle
 
 ## Data preparation
+PKB requires the input datasets to be formatted in certain ways. 
+
 ### Clinical outcome input
+Please refer to `example/response.txt` for an example. It needs to be a `,`-separated file with two columns, one for sample ID and the other for outcome value. The first row should be column names. The `response` column is `-1,1` coded, indicating different sample classes. 
+
+Example:
+
+	sample | response 
+  ------- | --------- 
+  sample1 | 1 
+  sample2 | 1
+  sample3 | -1
+  sample4 | -1   
+  ...     | ... 
+
+
 ### Gene expression input
+Please refer to `example/predictor.txt` for an example. It is also a comma-separated file. The first column is sample ID, and the other columns are genes. The first row is columns names, and each other row represents one sample.
+
+Example:
+
+| sample  | gene1 | gene2 | gene3 | gene4 | ... |
+|---------|-------|-------|-------|-------|-----|
+| sample1 | 1.2   | 3.3   | 4.5   | 0.1   | ... |
+| sample2 | 0.5   | 2.6   | 2.3   | 1.2   | ... |
+| sample3 | 0.1   | 1.4   | 0.1   | 2.2   | ... |
+| sample4 | 0.8   | 0.2   | 8.6   | 1.8   | ... |
+| ...     | ...   | ...   | ...   | ...   | ... |
+
 ### Pathway input
+You can either provide your own pathway file, or use the built-in files, including  **KEGG, Biocarta, GO biological process pathways, GO computional pathways**. If you would like to use customized pathway file, please refer to `example/predictor_sets.txt` for an example. It should be a comma-separated file with no header. The first column are the names of pathways, and the second column are the lists of individual pathway members. Each list is a string of genes separated by spaces.
+
+Example:
+
+    |  |
+  ------- | --------- 
+  pathway1 | gene11 gene12 gene13 gene14 
+  pathway2 | gene21 gene22
+  pathway3 | gene31 gene32 gene33
+  pathway4 | gene41 gene42
+  ...     | ... 
+
 ### PKB configuration file
 Here is an example configuration file for applying PKB to our example dataset:
 
