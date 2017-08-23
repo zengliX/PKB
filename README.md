@@ -123,19 +123,19 @@ The outputs will be saved in the `output_folder` as you specified in the configu
 
 
 ### Figures
-1. `err.pdf`:    
+1. `err.png`:    
 presents the classifcation error rate at each iteration
-![](example/example_output/err.pdf?raw=true)
+![](example/example_output/err.png?raw=true)
 
-2. `opt_weights.pdf`:    
+2. `opt_weights.png`:    
 shows the optimal pathways weights at the iteration with the smallest testing error
-![](example/example_output/opt_weights.pdf?raw=true)
+![](example/example_output/opt_weights.png?raw=true)
 
 
-3. `weights_path1.pdf,weights_path2.pdf`:    
-both figures show the changes of the pathways weights as iteration number goes up. `weights_path2.pdf` is just a zoomed-in version of `weights_path1.pdf`, zooming close to the optimal iteration.
-![](example/example_output/weights_path1.pdf?raw=true)
-![](example/example_output/weights_path2.pdf?raw=true)
+3. `weights_path1.png,weights_path2.png`:    
+both figures show the changes of the pathways weights as iteration number goes up. `weights_path2.png` is just a zoomed-in version of `weights_path1.png`, zooming close to the optimal iteration.
+![](example/example_output/weights_path1.png?raw=true)
+![](example/example_output/weights_path2.png?raw=true)
 
 
 ### Table

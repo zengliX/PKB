@@ -220,11 +220,11 @@ opt_t = outputs.best_t()
 
     # trace
 f = outputs.show_err()
-f.savefig(inputs.output_folder + "/err.pdf")
+f.savefig(inputs.output_folder + "/err.png")
 
     # opt weights
 [weights,f0] = outputs.group_weights(opt_t,plot=True)
-f0.savefig(inputs.output_folder + "/opt_weights.pdf")
+f0.savefig(inputs.output_folder + "/opt_weights.png")
 
     # opt weights list
 sorted_w = pd.Series(weights,index=inputs.group_names).sort_values(ascending=False)
@@ -232,8 +232,8 @@ sorted_w.to_csv(inputs.output_folder+'/opt_weights.txt',index_label='group')
 
     # weights paths
 [path_mat,f1,f2] = outputs.weights_path(plot=True)
-f1.savefig(inputs.output_folder + "/weights_path1.pdf")
-f2.savefig(inputs.output_folder + "/weights_path2.pdf")
+f1.savefig(inputs.output_folder + "/weights_path1.png")
+f2.savefig(inputs.output_folder + "/weights_path2.png")
 
 
 # ███████  █████  ██    ██ ███████
