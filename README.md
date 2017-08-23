@@ -21,7 +21,7 @@ Please refer to `example/response.txt` for an example. It needs to be a `,`-sepa
 
 Example:
 
-	sample | response 
+  sample | response 
   ------- | --------- 
   sample1 | 1 
   sample2 | 1
@@ -44,11 +44,15 @@ Example:
 | ...     | ...   | ...   | ...   | ...   | ... |
 
 ### Pathway input
-You can either provide your own pathway file, or use the built-in files, including  **KEGG, Biocarta, GO biological process pathways, GO computional pathways**. If you would like to use customized pathway file, please refer to `example/predictor_sets.txt` for an example. It should be a comma-separated file with no header. The first column are the names of pathways, and the second column are the lists of individual pathway members. Each list is a string of genes separated by spaces.
+You can either provide your own pathway file, or use the built-in files, including  **KEGG, Biocarta, GO biological process pathways, GO computional pathways**. 
+
+To use the built-in pathways, just use the corresponding files in `./data` folder when writing the configuration file. 
+
+If you would like to use customized pathway file, please refer to `example/predictor_sets.txt` for an example. It should be a comma-separated file with no header. The first column are the names of pathways, and the second column are the lists of individual pathway members. Each list is a string of genes separated by spaces.
 
 Example:
 
-    |  |
+  |  |
   ------- | --------- 
   pathway1 | gene11 gene12 gene13 gene14 
   pathway2 | gene21 gene22
@@ -108,12 +112,40 @@ Follow the steps below in order to run PKB on your own computer (we use our toy 
 
 3. implement PKB: 
 
-	```
+	```python
+	# python PKB.py path/to/your_config_file.txt
 	python PKB.py ./example/config_file.txt
 	```
 
 The outputs will be saved in the `output_folder` as you specified in the configuration file.
+
 ## Results interpretation
+
+
+### Figures
+1. `err.pdf`:    
+presents the classifcation error rate at each iteration
+![err.pdf](./example/example_output/err.pdf)
+
+2. `opt_weights.pdf`:    
+shows the optimal pathways weights at the iteration with the smallest testing error
+![err.pdf](./example/example_output/opt_weights.pdf)
+
+
+3. `weights_path1.pdf,weights_path2.pdf`:    
+both figures show the changes of the pathways weights as iteration number goes up. `weights_path2.pdf` is just a zoomed-in version of `weights_path1.pdf`, zooming close to the optimal iteration.
+![err.pdf](./example/example_output/weights_path1.pdf)
+![err.pdf](./example/example_output/weights_path2.pdf)
+
+
+### Table
+1. `opt_weights.txt`:    
+a table showing the optimal weights of all pahtways. It is sorted in descending order. The first column are pathways, and the second column are correponding weights.
+
+### Pickle file
+1. `results.pckl`:   
+contains information of the whole boosting process. You can recover the prediction function at every step from this file.
+
 
 ## Contact 
 Please feel free to contact <li.zeng@yale.edu> if you have any questions.
