@@ -1,0 +1,15 @@
+1,gene1 gene2 gene3 gene4 gene5
+2,gene6 gene7 gene8 gene9 gene10
+3,gene11 gene12 gene13 gene14 gene15
+4,gene16 gene17 gene18 gene19 gene20
+5,gene21 gene22 gene23 gene24 gene25
+6,gene26 gene27 gene28 gene29 gene30
+7,gene31 gene32 gene33 gene34 gene35
+8,gene36 gene37 gene38 gene39 gene40
+9,gene41 gene42 gene43 gene44 gene45
+10,gene46 gene47 gene48 gene49 gene50
+11,gene51 gene52 gene53 gene54 gene55
+12,gene56 gene57 gene58 gene59 gene60
+13,gene61 gene62 gene63 gene64 gene65
+14,gene66 gene67 gene68 gene69 gene70
+15,gene71 gene72 gene73 gene74 gene75
