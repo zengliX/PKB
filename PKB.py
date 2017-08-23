@@ -23,6 +23,7 @@ from multiprocessing import cpu_count
 from sys import argv
 import sharedmem
 import scipy
+import pandas as pd
 
 """-----------------
 FUNCTIONS
@@ -58,6 +59,7 @@ def line_search(sharedK,F_train,ytrain,Kdims,pars):
 np.random.seed(1)
 
 # input:  folder with data and configuration file
+#config_file = './example/config_file.txt'
 config_file = argv[1]
 print("input file:",config_file)
 inputs = assist.input_process.input_obj()
@@ -219,12 +221,14 @@ opt_t = outputs.best_t()
     # trace
 f = outputs.show_err()
 f.savefig(inputs.output_folder + "/err.pdf")
-f = outputs.show_loss()
-f.savefig(inputs.output_folder + "/loss.pdf")
 
     # opt weights
 [weights,f0] = outputs.group_weights(opt_t,plot=True)
 f0.savefig(inputs.output_folder + "/opt_weights.pdf")
+
+    # opt weights list
+sorted_w = pd.Series(weights,index=inputs.group_names).sort_values(ascending=False)
+sorted_w.to_csv(inputs.output_folder+'/opt_weights.txt',index_label='group')
 
     # weights paths
 [path_mat,f1,f2] = outputs.weights_path(plot=True)
