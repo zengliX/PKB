@@ -52,7 +52,7 @@ If you would like to use customized pathway file, please refer to `example/predi
 
 Example:
 
-  |  |
+  pathway| contents 
   ------- | --------- 
   pathway1 | gene11 gene12 gene13 gene14 
   pathway2 | gene21 gene22
@@ -125,17 +125,17 @@ The outputs will be saved in the `output_folder` as you specified in the configu
 ### Figures
 1. `err.pdf`:    
 presents the classifcation error rate at each iteration
-![err.pdf](./example/example_output/err.pdf)
+![](./example/example_output/err.pdf)
 
 2. `opt_weights.pdf`:    
 shows the optimal pathways weights at the iteration with the smallest testing error
-![err.pdf](./example/example_output/opt_weights.pdf)
+![](./example/example_output/opt_weights.pdf)
 
 
 3. `weights_path1.pdf,weights_path2.pdf`:    
 both figures show the changes of the pathways weights as iteration number goes up. `weights_path2.pdf` is just a zoomed-in version of `weights_path1.pdf`, zooming close to the optimal iteration.
-![err.pdf](./example/example_output/weights_path1.pdf)
-![err.pdf](./example/example_output/weights_path2.pdf)
+![](./example/example_output/weights_path1.pdf)
+![](./example/example_output/weights_path2.pdf)
 
 
 ### Table
@@ -146,6 +146,9 @@ a table showing the optimal weights of all pahtways. It is sorted in descending 
 1. `results.pckl`:   
 contains information of the whole boosting process. You can recover the prediction function at every step from this file.
 
+
+## Reference
+_Zeng, L., Yu, Z. and Zhao, H. (2017) A pathway-based kernel boosting model for classification analysis of genomic data_
 
 ## Contact 
 Please feel free to contact <li.zeng@yale.edu> if you have any questions.
