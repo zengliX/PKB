@@ -13,7 +13,15 @@ The program is written in **Python3**. Please install the following Python packa
 - matplotlib
 - pickle
 
-## Data preparation
+**Page contents:**
+
+- [Data preparation](#data)
+- [Running PKB](#run)
+- [Results interpretation](#results)
+
+
+
+##<a name=data></a> Data preparation
 PKB requires the input datasets to be formatted in certain ways. 
 
 ### Clinical outcome input
@@ -99,7 +107,7 @@ The parameters are interpreted as following:
 - `test_ratio`: the proportion of data to be used as testing dataset
 
 
-## Running PKB
+##<a name=run></a> Running PKB
 Follow the steps below in order to run PKB on your own computer (we use our toy dataset as example):
 
 1. clone this git repository :
@@ -119,8 +127,7 @@ Follow the steps below in order to run PKB on your own computer (we use our toy 
 
 The outputs will be saved in the `output_folder` as you specified in the configuration file.
 
-## Results interpretation
-
+##<a name=results></a> Results interpretation
 
 ### Figures
 1. `err.png`:    
