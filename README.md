@@ -21,7 +21,7 @@ The program is written in **Python3**. Please install the following Python packa
 
 
 
-##<a name=data></a> Data preparation
+## <a name=data></a> Data preparation
 PKB requires the input datasets to be formatted in certain ways. 
 
 ### Clinical outcome input
@@ -107,7 +107,7 @@ The parameters are interpreted as following:
 - `test_ratio`: the proportion of data to be used as testing dataset
 
 
-##<a name=run></a> Running PKB
+## <a name=run></a> Running PKB
 Follow the steps below in order to run PKB on your own computer (we use our toy dataset as example):
 
 1. clone this git repository :
@@ -127,7 +127,7 @@ Follow the steps below in order to run PKB on your own computer (we use our toy 
 
 The outputs will be saved in the `output_folder` as you specified in the configuration file.
 
-##<a name=results></a> Results interpretation
+## <a name=results></a> Results interpretation
 
 ### Figures
 1. `err.png`:    
