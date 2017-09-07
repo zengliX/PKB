@@ -10,44 +10,21 @@ author: li zeng
 # ██ ██  ██  ██ ██      ██    ██ ██   ██    ██
 # ██ ██      ██ ██       ██████  ██   ██    ██
 
-
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import assist
+from assist.functions import loss_fun, line_search
+from assist.cvPKB import CV_PKB
 from assist.method_L1 import oneiter_L1, find_Lambda_L1
 from assist.method_L2 import oneiter_L2, find_Lambda_L2
 import numpy as np
+import pandas as pd
 import time
 from multiprocessing import cpu_count
 from sys import argv
 import sharedmem
-import scipy
-import pandas as pd
-
-"""-----------------
-FUNCTIONS
---------------------"""
-# loss function
-def loss_fun(f,y):
-    return np.mean(np.log(1+np.exp(-y*f)))    
-
-# line search
-def line_search(sharedK,F_train,ytrain,Kdims,pars):
-    [m,beta,c] = pars    
-    # get K
-    nrow = Kdims[0]
-    width = nrow**2
-    Km = sharedK[(m*width):((m+1)*width)].reshape((nrow,nrow))
-    
-    b = Km.dot(beta)+c
-    # line search function
-    def temp_fun(x):
-        return np.log(1+np.exp(-ytrain*(F_train+ x*b))).sum()
-    out = scipy.optimize.minimize_scalar(temp_fun)
-    if not out.success:
-        print("warning: minimization failure")
-    return out.x    
+  
 
 # ██ ███    ██ ██████  ██    ██ ████████
 # ██ ████   ██ ██   ██ ██    ██    ██
@@ -64,19 +41,16 @@ config_file = argv[1]
 print("input file:",config_file)
 inputs = assist.input_process.input_obj()
 inputs.proc_input(config_file)
-inputs.data_preprocessing(rm_lowvar=False,center=True,norm=False)
+inputs.data_preprocessing(center=True)
 
 
 """---------------------------
 SPLIT TEST TRAIN
 ----------------------------"""
-inputs.data_split()
 # input summary
 print()
-# inputs.data_split()
 inputs.input_summary()
 inputs.model_param()
-print("number of cpus available:",cpu_count())
 print()
 
 
@@ -90,7 +64,7 @@ print()
 CALCULATE KERNEL
 ----------------------------"""
 K_train = assist.kernel_calc.get_kernels(inputs.train_predictors,inputs.train_predictors,inputs)
-if inputs.Ntest > 0:
+if not inputs.Ntest is None:
     K_test= assist.kernel_calc.get_kernels(inputs.train_predictors,inputs.test_predictors,inputs)
 
 # put K_train in shared memory
@@ -113,11 +87,8 @@ outputs.F0 = F0
 F_train = np.repeat(F0,inputs.Ntrain) # keep track of F_t(x_i) on training data
 outputs.train_err.append((np.sign(F_train) != ytrain).sum()/len(ytrain))
 outputs.train_loss.append(loss_fun(F_train,ytrain))
-if inputs.Ntest > 0:
-    ytest = np.squeeze(inputs.test_response.values)
+if not inputs.Ntest is None:
     F_test = np.repeat(F0,inputs.Ntest) # keep track of F_t(x_i) on testing data
-    outputs.test_err.append((np.sign(F_test) != ytest).sum()/len(ytest))
-    outputs.test_loss.append(loss_fun(F_test,ytest))
     
 outputs.trace.append([0,np.repeat(0,inputs.Ntrain),0])
 
@@ -150,26 +121,33 @@ if (inputs.Ntrain > 500 or inputs.Ngroup > 40):
 else:
     parallel = False
     gr_sub = False
-    print("Algorithm: parallel algorithm not used")
+    print("Algorithm: parallel algorithm not used\n")
 
-ESTOP = 500 # early stop if test_loss have no increase
-if inputs.Ntest>0: loss0 = outputs.test_loss[0]
-ct_fromMinLoss = 0 # count from minLoss
+ESTOP = 100 # early stop if test_loss have no increase
+
+"""---------------------------
+CV FOR NUMBER OF ITERATIONS
+----------------------------"""
+opt_iter = CV_PKB(inputs,sharedK,K_train,Kdims,Lambda,nfold=3,ESTOP=ESTOP,\
+                  ncpu=1,parallel=False,gr_sub=False,plot=True)
+
 
 """---------------------------
 BOOSTING ITERATIONS
 ----------------------------"""
-
 time0 = time.time()
-for t in range(1,inputs.maxiter+1):
+print("--------------------- Boosting -------------------")
+print("iteration\ttrain err\t time(min)")
+for t in range(1,opt_iter+1):
     # one iteration
     if inputs.method == 'L2':
         [m,beta,c] = oneiter_L2(sharedK,F_train,ytrain,Kdims,\
-                Lambda=Lambda,ncpu = ncpu,parallel = parallel,subset=inputs.rand_subset)    
+                Lambda=Lambda,ncpu = ncpu,parallel = parallel,\
+                sele_loc=None,group_subset = gr_sub)    
     if inputs.method == 'L1':
         [m,beta,c] = oneiter_L1(sharedK,F_train,ytrain,Kdims,\
                 Lambda=Lambda,ncpu = ncpu,parallel = parallel,\
-                subset=inputs.rand_subset,group_subset = gr_sub) 
+                sele_loc=None,group_subset = gr_sub) 
     
     # line search
     x = line_search(sharedK,F_train,ytrain,Kdims,[m,beta,c])
@@ -181,31 +159,16 @@ for t in range(1,inputs.maxiter+1):
     F_train += (K_train[:,:,m].dot(beta) + c)*inputs.nu
     outputs.train_err.append((np.sign(F_train)!=ytrain).sum()/len(ytrain))
     outputs.train_loss.append(loss_fun(F_train,ytrain))
-    
-    if inputs.Ntest>0:
+    if not inputs.Ntest is None:
         F_test += (K_test[:,:,m].T.dot(beta)+ c)*inputs.nu
-        outputs.test_err.append((np.sign(F_test)!=ytest).sum()/len(ytest))
-        new_loss = loss_fun(F_test,ytest)
-        outputs.test_loss.append(loss_fun(F_test,ytest))
-        if new_loss < loss0:
-            ct_fromMinLoss = 0; loss0 = new_loss
-        else:
-            ct_fromMinLoss += 1
-        # check early stop 
-        if ct_fromMinLoss == ESTOP: 
-            print('Early stop criterion satisfied: break boosting.\n')
-            break
                    
     # print time report
-    if t%50 == 0:
-        print("iteration:",t)
-        print("training error:",outputs.train_err[t])
-        if inputs.Ntest > 0: print("testing error:",outputs.test_err[t])
+    if t%20 == 0:
         iter_persec = t/(time.time() - time0) # time of one iteration
-        print("Speed:",iter_persec,"iterations/second")
-        rem_time = (inputs.maxiter-t)/iter_persec # remaining time
-        print("Time remaining:",rem_time/60,"mins")
-        print()
+        rem_time = (opt_iter-t)/iter_persec # remaining time
+        print("%9.0f\t%9.4f\t%9.4f" % \
+              (t,outputs.train_err[t],rem_time/60))
+print("--------------------------------------------------")
 
 
 
@@ -214,16 +177,13 @@ for t in range(1,inputs.maxiter+1):
 # ██████  █████   ███████ ██    ██ ██      ██    ███████
 # ██   ██ ██           ██ ██    ██ ██      ██         ██
 # ██   ██ ███████ ███████  ██████  ███████ ██    ███████
-
-## show results
-opt_t = outputs.best_t()
-
-    # trace
-f = outputs.show_err()
-f.savefig(inputs.output_folder + "/err.png")
-
+    # predictions
+if not inputs.Ntest is None:
+    pred = pd.Series( np.array([int(x>0) for x in F_test])*2-1, index= inputs.test_predictors.index )
+    pred.to_csv(inputs.output_folder+"/test_prediction.txt",index_label='sample')
+    
     # opt weights
-[weights,f0] = outputs.group_weights(opt_t,plot=True)
+[weights,f0] = outputs.group_weights(opt_iter,plot=True)
 f0.savefig(inputs.output_folder + "/opt_weights.png")
 
     # opt weights list
@@ -231,9 +191,8 @@ sorted_w = pd.Series(weights,index=inputs.group_names).sort_values(ascending=Fal
 sorted_w.to_csv(inputs.output_folder+'/opt_weights.txt',index_label='group')
 
     # weights paths
-[path_mat,f1,f2] = outputs.weights_path(plot=True)
-f1.savefig(inputs.output_folder + "/weights_path1.png")
-f2.savefig(inputs.output_folder + "/weights_path2.png")
+[path_mat,f] = outputs.weights_path(plot=True)
+f.savefig(inputs.output_folder + "/weights_path.png")
 
 
 # ███████  █████  ██    ██ ███████

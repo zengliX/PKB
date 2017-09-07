@@ -4,15 +4,14 @@
 predictor: predictor.txt  
 response: response.txt    
 predictor_set: predictor_sets.txt
-test_ratio: 0.333
+test_file: test_predictor.txt
 
 # model parameters
 maxiter: 800
-random_subset: 0.8
 learning_rate: 0.02
 Lambda:   
 kernel: poly3
-method: L2
+method: L1
 
 # folders
 input_folder: ./example
