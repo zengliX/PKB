@@ -27,6 +27,9 @@ The algorithm has two parts. The first part is calculating an optimal number of 
 
 In part two, we use the whole training data to fit the boosting model to the previously calculated number of iterations. We provide figures and tables to report the estimated weights for each pathway in the final model. If gene expression data for new samples is given, we also provide predictions in the output.
 
+## Reference
+_Zeng, L., Yu, Z. and Zhao, H. (2017) A pathway-based kernel boosting method for sample classification using genomic data_ [\[pdf\]](https://arxiv.org/pdf/1803.03910.pdf)
+
 ## <a name=data></a> Data preparation
 PKB requires the input datasets to be formatted in certain ways. 
 
@@ -160,9 +163,6 @@ the predicted outcome values, if `test_file` is provided in the configuration fi
 1. `results.pckl`:   
 contains information of the whole boosting process. You can recover the prediction function at every step from this file.
 
-
-## Reference
-_Zeng, L., Yu, Z. and Zhao, H. (2017) A pathway-based kernel boosting model for classification analysis of genomic data_
 
 ## Contact 
 Please feel free to contact <li.zeng@yale.edu> if you have any questions.
